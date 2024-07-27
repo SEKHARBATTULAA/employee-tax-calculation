@@ -66,14 +66,14 @@ public class EmployeeTaxCalculatorServiceImpl implements EmployeeTaxCalculatorSe
         LocalDateTime startDate = null;
         LocalDateTime endDate = null;
         if(!isDateInFirstQuarter()){
-            startDate = LocalDateTime.of(LocalDate.now().getYear(),4,30,0,0);
+            startDate = LocalDateTime.of(LocalDate.now().getYear(),4,01,0,0);
             endDate = LocalDateTime.of(LocalDate.now().getYear()+1,3,31,0,0);
         }else{
-            startDate = LocalDateTime.of(LocalDate.now().getYear()-1,4,30,0,0);
+            startDate = LocalDateTime.of(LocalDate.now().getYear()-1,4,01,0,0);
             endDate = LocalDateTime.of(LocalDate.now().getYear(),3,31,0,0);
         }
         if(employee.getDateOfJoin().isAfter(startDate)){
-             months = ChronoUnit.MONTHS.between(employee.getDateOfJoin(),endDate);
+             months = ChronoUnit.MONTHS.between(employee.getDateOfJoin(),endDate)+1;
              if(employee.getDateOfJoin().getDayOfMonth()>15){
                  months--;
              }
