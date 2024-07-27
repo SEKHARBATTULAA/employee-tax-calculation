@@ -12,6 +12,7 @@ import org.springframework.util.ObjectUtils;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -61,13 +62,38 @@ public class EmployeeTaxCalculatorServiceImpl implements EmployeeTaxCalculatorSe
 
 
     private double calcAnnualIncome(Employee employee){
-        long months = ChronoUnit.MONTHS.between(employee.getDateOfJoin(),LocalDateTime.now() );
-        double tax = 0.0;
-         return employee.getSalary().doubleValue()*months;
+        long months = 0;
+        LocalDateTime startDate = null;
+        LocalDateTime endDate = null;
+        if(!isDateInFirstQuarter()){
+            startDate = LocalDateTime.of(LocalDate.now().getYear(),4,30,0,0);
+            endDate = LocalDateTime.of(LocalDate.now().getYear()+1,3,31,0,0);
+        }else{
+            startDate = LocalDateTime.of(LocalDate.now().getYear()-1,4,30,0,0);
+            endDate = LocalDateTime.of(LocalDate.now().getYear(),3,31,0,0);
+        }
+        if(employee.getDateOfJoin().isAfter(startDate)){
+             months = ChronoUnit.MONTHS.between(employee.getDateOfJoin(),endDate);
+             if(employee.getDateOfJoin().getDayOfMonth()>15){
+                 months--;
+             }
+            return employee.getSalary().doubleValue()*months;
+        }else{
+            return employee.getSalary().doubleValue()*12;
+        }
+
+
+
+    }
+
+    public boolean isDateInFirstQuarter() {
+        // Get the month from the date
+        Month month = LocalDateTime.now().getMonth();
+        // Months in the first quarter: January, February, March
+        return month == Month.JANUARY || month == Month.FEBRUARY || month == Month.MARCH;
     }
 
     private double taxCalculator(Employee employee){
-        long months = ChronoUnit.MONTHS.between(employee.getDateOfJoin(),LocalDateTime.now() );
         double tax = 0.0;
         double income=calcAnnualIncome(employee);
 
