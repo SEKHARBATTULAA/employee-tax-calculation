@@ -1,13 +1,12 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.constants.ApplicatonConstants;
 import com.example.demo.entity.Employee;
 import com.example.demo.model.TaxResponse;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.EmployeeTaxCalculatorService;
-import org.apache.catalina.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -18,9 +17,6 @@ import java.util.Optional;
 
 @Service
 public class EmployeeTaxCalculatorServiceImpl implements EmployeeTaxCalculatorService {
-
-    public static final int CESS_CAP_AMOUNT = 2500000;
-    public static final double CESS_PCT = 0.02;
     @Autowired
     private EmployeeRepository employeeRepository;
     @Override
@@ -97,14 +93,14 @@ public class EmployeeTaxCalculatorServiceImpl implements EmployeeTaxCalculatorSe
         double tax = 0.0;
         double income=calcAnnualIncome(employee);
 
-        if (income <= 250000) {
+        if (income <= ApplicatonConstants.TAX_UPTO_250000) {
             return tax;
-        } else if (income <= 500000) {
-            tax = (income - 250000) * 0.05;
-        } else if (income <= 1000000) {
-            tax = (250000 * 0.05) + (income - 500000) * 0.2;
+        } else if (income <= ApplicatonConstants.TAX_UPTO_500000) {
+            tax = (income - ApplicatonConstants.TAX_UPTO_250000) * ApplicatonConstants.TAX_RATE_5;
+        } else if (income <= ApplicatonConstants.TAX_UPTO_1000000) {
+            tax = (ApplicatonConstants.TAX_UPTO_250000 * ApplicatonConstants.TAX_RATE_5) + (income - ApplicatonConstants.TAX_UPTO_500000) * ApplicatonConstants.TAX_RATE_10;
         } else {
-            tax = (250000 * 0.05) + (500000 * 0.2) + (income - 1000000) * 0.3;
+            tax = (ApplicatonConstants.TAX_UPTO_250000 * ApplicatonConstants.TAX_RATE_5) + (ApplicatonConstants.TAX_UPTO_500000 * ApplicatonConstants.TAX_RATE_10) + (income - ApplicatonConstants.TAX_UPTO_1000000) * ApplicatonConstants.TAX_RATE_20;
         }
         return tax;
     }
@@ -112,9 +108,9 @@ public class EmployeeTaxCalculatorServiceImpl implements EmployeeTaxCalculatorSe
     private double calculateCess(Employee employee) {
         double annualIncome = calcAnnualIncome(employee);
         double cessTaxAmount = 0.0;
-        if(annualIncome > CESS_CAP_AMOUNT){
-            double cessAmount = annualIncome - CESS_CAP_AMOUNT;
-            cessTaxAmount= cessAmount * CESS_PCT;
+        if(annualIncome > ApplicatonConstants.CESS_CAP_AMOUNT){
+            double cessAmount = annualIncome - ApplicatonConstants.CESS_CAP_AMOUNT;
+            cessTaxAmount= cessAmount * ApplicatonConstants.CESS_PCT;
         }
         return cessTaxAmount;
     }

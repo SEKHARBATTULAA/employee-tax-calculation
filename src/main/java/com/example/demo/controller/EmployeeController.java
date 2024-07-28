@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Employee;
 import com.example.demo.service.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class EmployeeController {
     private EmployeeService employeeService;
 
     @PostMapping()
-    public ResponseEntity<String> saveEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<String> saveEmployee(@Valid @RequestBody Employee employee) {
         employeeService.saveEmployee(employee);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

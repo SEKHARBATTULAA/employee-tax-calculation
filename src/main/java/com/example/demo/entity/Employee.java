@@ -1,18 +1,18 @@
 package com.example.demo.entity;
 
+import com.example.demo.validator.BeforeDate;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.PastOrPresent;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Document(collection = "Employee")
 public class Employee {
@@ -34,7 +34,7 @@ public class Employee {
     List<String> phoneNumbers;
 
     @NonNull
-    @PastOrPresent
+    @BeforeDate()
     private LocalDateTime dateOfJoin;
 
     @NonNull

@@ -18,7 +18,6 @@ public class TaxCaluculatorController {
 
     @GetMapping()
     public ResponseEntity<TaxResponse> calculateTax(@RequestParam(required = true) String empID, @RequestParam (required = false) String regime) {
-
         TaxResponse taxResponse = taxCalculatorService.calculateTax(empID,regime);
         return new ResponseEntity<>(taxResponse, HttpStatus.OK);
     }
