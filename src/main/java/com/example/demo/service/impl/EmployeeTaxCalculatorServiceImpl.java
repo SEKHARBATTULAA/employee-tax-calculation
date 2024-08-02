@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.constants.ApplicatonConstants;
 import com.example.demo.entity.Employee;
+import com.example.demo.exceptions.ApplicationException;
 import com.example.demo.model.TaxResponse;
 import com.example.demo.repository.EmployeeRepository;
 import com.example.demo.service.EmployeeTaxCalculatorService;
@@ -21,16 +22,14 @@ public class EmployeeTaxCalculatorServiceImpl implements EmployeeTaxCalculatorSe
     private EmployeeRepository employeeRepository;
     @Override
     public TaxResponse calculateTax(String empID, String regime) {
-        Optional<Employee> employeeOptional = employeeRepository.findById(empID);
+        Employee employee = employeeRepository.findById(empID).orElseThrow(()->new ApplicationException("Employee not found"));
         int noOfMonths = 0;
         double taxCalculatedAmount = 0.0;
         TaxResponse taxResponse = null;
-        if(employeeOptional.isPresent()){
-            Employee employee=employeeOptional.get();
             taxCalculatedAmount = taxCalculator(employee) + calculateCess(employee);
             System.out.printf("taxCalculatedAmount:"+taxCalculatedAmount);
-            taxResponse= buildResponse(employeeOptional.get(),taxCalculator(employee), calculateCess(employee));
-        }
+            taxResponse= buildResponse(employee,taxCalculator(employee), calculateCess(employee));
+
         return taxResponse;
     }
 
